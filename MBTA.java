@@ -50,10 +50,11 @@ public class MBTA {
     }
     // Iniialize next stop for passenger
     p.setDestination(stationList.get(1));
+    p.setStart(stationList.get(0));
+
 
     //Add passenger to station waitlist
     stationList.get(0).addPassenger(p);
-
     trips.put(p, stationList);
   }
 
@@ -65,9 +66,13 @@ public class MBTA {
           List<Station> values = mapElement.getValue();
 
           // Check to see if every passenger is at the last station in there respective station list
-          if(p.currDest() != values.get(0)) {
-            throw new UnsupportedOperationException("Passenger " + p.toString() + " started at wrong station " + p.currDest().toString());
+          if(p.currDest() != values.get(1)) {
+            throw new UnsupportedOperationException("Passenger " + p.toString() + " is going to wrong station " + p.currDest().toString());
           } 
+
+          if(p.getStart() != values.get(0)) {
+            throw new UnsupportedOperationException("Passenger " + p.toString() + " started at wrong station " + p.currDest().toString());
+          }
         }
     
     for (Map.Entry<Train, List<Station>> mapElement : lines.entrySet()) {
@@ -89,7 +94,7 @@ public class MBTA {
           List<Station> values = mapElement.getValue();
 
           // Check to see if every passenger is at the last station in there respective station list
-          if(p.currDest() != values.get(values.size())) {
+          if(p.currDest() != null) {
             throw new UnsupportedOperationException("Passenger " + p.toString() + " ended at wrong station " + p.currDest().toString());
           }
         }
