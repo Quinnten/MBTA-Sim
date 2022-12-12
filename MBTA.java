@@ -70,7 +70,7 @@ public class MBTA {
             throw new UnsupportedOperationException("Passenger " + p.toString() + " is going to wrong station " + p.currDest().toString());
           } 
 
-          if(p.getStart() != values.get(0)) {
+          if(p.startStation() != values.get(0)) {
             throw new UnsupportedOperationException("Passenger " + p.toString() + " started at wrong station " + p.currDest().toString());
           }
         }
