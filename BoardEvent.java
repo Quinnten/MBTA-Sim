@@ -1,157 +1,54 @@
 import java.util.*;
-import java.io.*;
-import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.util.Scanner;
-import com.google.gson.*;
 
-public class MBTA {
+public class BoardEvent implements Event {
+  public final Passenger p; public final Train t; public final Station s;
+  public BoardEvent(Passenger p, Train t, Station s) {
+    this.p = p; this.t = t; this.s = s;
+  }
+  public boolean equals(Object o) {
+    if (o instanceof BoardEvent e) {
+      return p.equals(e.p) && t.equals(e.t) && s.equals(e.s);
+    }
+    return false;
+  }
+  public int hashCode() {
+    return Objects.hash(p, t, s);
+  }
+  public String toString() {
+    return "Passenger " + p + " boards " + t + " at " + s;
+  }
+  public List<String> toStringList() {
+    return List.of(p.toString(), t.toString(), s.toString());
+  }
 
-  public HashMap<Train, List<Station>> lines = new HashMap<>();
-  public HashMap<Passenger, List<Station>> trips = new HashMap<>();
 
-  // Creates an initially empty simulation
-  public MBTA() { }
 
-  // Adds a new transit line with given name and stations
-  public void addLine(String name, List<String> stations) {
-    Train t = Train.make(name);
 
-    if (lines.containsKey(t)) {
-      throw new UnsupportedOperationException("A " + name + " line already exists");
+
+
+  public void replayAndCheck(MBTA mbta) {
+    // Only move if the passenger is still traveling
+    System.out.println("Will this ven work?");
+    if (!p.isTraveling()) {
+      throw new UnsupportedOperationException("Passenger " + p.toString() + " is done with their journey and can no longer board");
+    } else if (!t.currStation().equals(s)) {
+      throw new UnsupportedOperationException("Can't board a passenger at a station they're not at");
     }
 
-    ArrayList<Station> stationList = new ArrayList<>();
-    for (String s : stations) {
-      stationList.add(Station.make(s));
+    // make sure that the train is going to the Passenger's destination
+    List<Station> stations = mbta.lines.get(t);
+    if (!stations.contains(p.currDest())) {
+      throw new UnsupportedOperationException(t.toString() + " will not bring " + p.toString() + "to their destination of " + p.currDest().toString());
     }
 
-    //Initialize the train's current station to the beginning of the simulation
-    t.setStation(stationList.get(0));
+    /*update the state
+      Add passenger to train 
+      remove passenger from station 
+    */
+    t.addPassenger(p);
+    s.removePassenger(p);
 
-    //Initialize the station so it knows that it's occupied
-    stationList.get(0).setOccupied(true);
-
-    System.out.println(t.toString() + " starts at " + stationList.get(0).toString());
-
-    lines.put(t, stationList);
-  }
-
-  // Adds a new planned journey to the simulation
-  public void addJourney(String name, List<String> stations) {
-    Passenger p = Passenger.make(name);
-
-    if (trips.containsKey(p)) {
-      throw new UnsupportedOperationException("A passeneger with the name " + name + " already exists");
-    }
-
-    ArrayList<Station> stationList = new ArrayList<>();
-
-    for (String s : stations) {
-      stationList.add(Station.make(s));
-    }
-    // Iniialize next stop for passenger
-    p.setDestination(stationList.get(1));
-    p.setStart(stationList.get(0));
-
-
-    //Add passenger to station waitlist
-    stationList.get(0).addPassenger(p);
-    trips.put(p, stationList);
-  }
-
-  // Return normally if initial simulation conditions are satisfied, otherwise
-  // raises an exception
-  public void checkStart() {
-    System.out.println("WE HAVE ENTERED THE METHOD!!!");
-
-    for (Map.Entry<Passenger, List<Station>> mapElement : trips.entrySet()) {
-          Passenger p = mapElement.getKey();
-          List<Station> values = mapElement.getValue();
-
-          // Check to see if every passenger is at the last station in there respective station list
-          if(p.currDest() != values.get(1)) {
-            throw new UnsupportedOperationException("Passenger " + p.toString() + " is going to wrong station " + p.currDest().toString());
-          } 
-
-          if(p.startStation() != values.get(0)) {
-            throw new UnsupportedOperationException("Passenger " + p.toString() + " started at wrong station " + p.currDest().toString());
-          }
-        }
-    System.out.println("WE ARE HERE!!!");
-    for (Map.Entry<Train, List<Station>> mapElement : lines.entrySet()) {
-          Train t = mapElement.getKey();
-          List<Station> values = mapElement.getValue();
-
-          //Make sure every train is at the beginning of the line
-          if(t.currStation() != values.get(0)) {
-            throw new UnsupportedOperationException("Train " + t.toString() + " started at wrong station " + t.currStation().toString());
-          }
-
-          //check that the starting station is true and the rest are false
-          
-        }
-
-       System.out.println("WE ARE ABOUT TO LEAVE THE METHOD!!!");
-  }
-
-  // Return normally if final simulation conditions are satisfied, otherwise
-  // raises an exception
-  public void checkEnd() {
-    for (Map.Entry<Passenger, List<Station>> mapElement : trips.entrySet()) {
-          Passenger p = mapElement.getKey();
-          List<Station> values = mapElement.getValue();
-
-          // Check to see if every passenger is at the last station in there respective station list
-          if(p.currDest() != null) {
-            throw new UnsupportedOperationException("Passenger " + p.toString() + " ended at wrong station " + p.currDest().toString());
-          }
-        }
-  }
-
-  // reset to an empty simulation
-  public void reset() {
-    HashMap<Train, List<Station>> l = new HashMap<>();
-    lines = l;
-    HashMap<Passenger, List<Station>> t = new HashMap<>();
-    trips = t;
-  }
-
-  // adds simulation configuration from a file
-  public void loadConfig(String filename) {
-      try {
-        File myObj = new File(filename);
-        Scanner myReader = new Scanner(myObj);
-      
-        String data = " ";
-        while (myReader.hasNextLine()) {
-          data = data.concat(myReader.nextLine());
-        }
-
-        Gson gson = new Gson();
-        Converter c = gson.fromJson(data, Converter.class);
-
-        for (Map.Entry<String, List<String>> mapElement : c.lines.entrySet()) {
-          String key = mapElement.getKey();
-          List<String> values = mapElement.getValue();
-          if (lines.containsKey(key)) {
-            throw new UnsupportedOperationException("Can not add two lines with the same name");
-          }
-          addLine(key, values);
-        }
-
-        for (Map.Entry<String, List<String>> mapElement : c.trips.entrySet()) {
-          String key = mapElement.getKey();
-          List<String> values = mapElement.getValue();
-          if (trips.containsKey(key)) {
-            throw new UnsupportedOperationException("Can not add two passemngers with the same name");
-          }
-          addJourney(key, values);
-        }
-        myReader.close();
-
-      } catch(Exception e) {
-          e.printStackTrace();
-      }
+  System.out.println("About to leave method?");
+   
   }
 }
