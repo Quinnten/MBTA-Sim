@@ -23,10 +23,16 @@ public class MoveEvent implements Event {
 
 
 
+
+
+
   public void replayAndCheck(MBTA mbta) {
     // Needs to make sure there isn't another train at the desired location
     if (s2.isOccupied()) {
-      throw new UnsupportedOperationException("Train " + t.toString() + " is trying to go to station " + s1.toString() + " but it is occupied");
+      throw new UnsupportedOperationException("Train " + t.toString() + " is trying to go to station " + s1.toString() + "from station " + s2.toString() + " but it is occupied");
+    }
+    if (!t.currStation().equals(s1)) {
+      throw new UnsupportedOperationException("There is a mix up about the train should be starting");
     }
 
     // Need to make sure the train is arriving at the right station and reverse if it needs to
