@@ -46,6 +46,7 @@ public class DeboardEvent implements Event {
     if (journey.get(journey.size() - 1).equals(s)) {
       p.endJourney();
       p.setDestination(null);
+      System.out.println(p.toString() + " has finished their journey and should no longer be allowed to board so help me God");
     } else {
       int index = journey.indexOf(s);
       p.setDestination(journey.get(index + 1));
