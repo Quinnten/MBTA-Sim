@@ -24,10 +24,15 @@ public class DeboardEvent implements Event {
 
 
   public void replayAndCheck(MBTA mbta) {
+
+    if (!mbta.lines.containsKey(t) || !mbta.trips.containsKey(p)){
+      throw new UnsupportedOperationException("The train or passenger does not exist");
+    }
     //Basically just check that this station is the destination station 
     if (!p.currDest().equals(s)) {
       throw new UnsupportedOperationException(s.toString() + " is the wring destination for passenger " + p.toString());
-    } else if (!t.currStation().equals(s)) {
+    } 
+    if (!t.currStation().equals(s)) {
       throw new UnsupportedOperationException("Can't deboard a passenger at a station they're not at");
     }
 
