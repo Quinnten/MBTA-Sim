@@ -28,6 +28,7 @@ public class BoardEvent implements Event {
 
   public void replayAndCheck(MBTA mbta) {
     // Only move if the passenger is still traveling
+    System.out.println("Will this ven work?");
     if (!p.isTraveling()) {
       throw new UnsupportedOperationException("Passenger " + p.toString() + " is done with their journey and can no longer board");
     } else if (!t.currStation().equals(s)) {
@@ -36,7 +37,7 @@ public class BoardEvent implements Event {
 
     // make sure that the train is going to the Passenger's destination
     List<Station> stations = mbta.lines.get(t);
-    if (stations.contains(p.currDest())) {
+    if (!stations.contains(p.currDest())) {
       throw new UnsupportedOperationException(t.toString() + " will not bring " + p.toString() + "to their destination of " + p.currDest().toString());
     }
 
@@ -47,7 +48,7 @@ public class BoardEvent implements Event {
     t.addPassenger(p);
     s.removePassenger(p);
 
-
+  System.out.println("About to leave method?");
    
   }
 }
