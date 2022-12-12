@@ -29,7 +29,12 @@ public class BoardEvent implements Event {
   public void replayAndCheck(MBTA mbta) {
     // Only move if the passenger is still traveling
     System.out.println("Will this ven work?");
-    if (!p.isTraveling()) {
+
+    if (!s.getPassengers().contains(p)) {
+      throw new UnsupportedOperationException("The passenger " + p.toString() + " is not located at this station " +s.toString());
+    }
+    
+    if (p.currDest() == null) {
       throw new UnsupportedOperationException("Passenger " + p.toString() + " is done with their journey and can no longer board");
     } else if (!t.currStation().equals(s)) {
       throw new UnsupportedOperationException("Can't board a passenger at a station they're not at");
