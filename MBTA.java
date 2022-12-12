@@ -26,16 +26,24 @@ public class MBTA {
       stationList.add(Station.make(s));
     }
 
+    if (stationList.size() < 2) {
+      throw new UnsupportedOperationException("A train needs at least 2 stations");
+    }
+
+    System.out.println("About to initialize train!!!");
     //Initialize the train's current station to the beginning of the simulation
     t.setStation(stationList.get(0));
-
     //Initialize the station so it knows that it's occupied
     stationList.get(0).setOccupied(true);
+    System.out.println("Initialized train");
 
     System.out.println(t.toString() + " starts at " + stationList.get(0).toString());
-
     lines.put(t, stationList);
   }
+
+
+
+
 
   // Adds a new planned journey to the simulation
   public void addJourney(String name, List<String> stations) {
@@ -51,14 +59,21 @@ public class MBTA {
       stationList.add(Station.make(s));
     }
     // Iniialize next stop for passenger
+
+    if (stationList.size() < 2) {
+      throw new UnsupportedOperationException("A passenger needs at least 2 stations");
+    }
+
     p.setDestination(stationList.get(1));
     p.setStart(stationList.get(0));
-
 
     //Add passenger to station waitlist
     stationList.get(0).addPassenger(p);
     trips.put(p, stationList);
   }
+
+
+
 
   // Return normally if initial simulation conditions are satisfied, otherwise
   // raises an exception
@@ -82,6 +97,8 @@ public class MBTA {
     for (Map.Entry<Train, List<Station>> mapElement : lines.entrySet()) {
           Train t = mapElement.getKey();
           List<Station> values = mapElement.getValue();
+
+          
 
           //Make sure every train is at the beginning of the line
           if(t.currStation() != values.get(0)) {
