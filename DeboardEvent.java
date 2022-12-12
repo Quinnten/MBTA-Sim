@@ -38,7 +38,7 @@ public class DeboardEvent implements Event {
 
     //Update destination or set the traveling boolean to false
     List<Station> journey = mbta.trips.get(p);
-    if (journey.get(journey.size()).equals(s)) {
+    if (journey.get(journey.size() - 1).equals(s)) {
       p.endJourney();
       p.setDestination(null);
     } else {
