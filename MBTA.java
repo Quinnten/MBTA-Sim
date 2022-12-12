@@ -30,12 +30,10 @@ public class MBTA {
       throw new UnsupportedOperationException("A train needs at least 2 stations");
     }
 
-    System.out.println("About to initialize train!!!");
     //Initialize the train's current station to the beginning of the simulation
     t.setStation(stationList.get(0));
     //Initialize the station so it knows that it's occupied
     stationList.get(0).setOccupied(true);
-    System.out.println("Initialized train");
 
     System.out.println(t.toString() + " starts at " + stationList.get(0).toString());
     lines.put(t, stationList);
@@ -78,8 +76,11 @@ public class MBTA {
   // Return normally if initial simulation conditions are satisfied, otherwise
   // raises an exception
   public void checkStart() {
-    System.out.println("WE HAVE ENTERED THE METHOD!!!");
+    if (lines.isEmpty()) {
+      throw new UnsupportedOperationException("There are no trains in the sim");
+    }
 
+    if (!trips.isEmpty()) {
     for (Map.Entry<Passenger, List<Station>> mapElement : trips.entrySet()) {
           Passenger p = mapElement.getKey();
           List<Station> values = mapElement.getValue();
@@ -93,23 +94,15 @@ public class MBTA {
             throw new UnsupportedOperationException("Passenger " + p.toString() + " started at wrong station " + p.currDest().toString());
           }
         }
-    System.out.println("WE ARE HERE!!!");
+    }
     for (Map.Entry<Train, List<Station>> mapElement : lines.entrySet()) {
           Train t = mapElement.getKey();
           List<Station> values = mapElement.getValue();
-
-          
-
           //Make sure every train is at the beginning of the line
           if(t.currStation() != values.get(0)) {
             throw new UnsupportedOperationException("Train " + t.toString() + " started at wrong station " + t.currStation().toString());
           }
-
-          //check that the starting station is true and the rest are false
-          
-        }
-
-       System.out.println("WE ARE ABOUT TO LEAVE THE METHOD!!!");
+       }
   }
 
   // Return normally if final simulation conditions are satisfied, otherwise
@@ -121,7 +114,7 @@ public class MBTA {
 
           // Check to see if every passenger is at the last station in there respective station list
           if(p.currDest() != null) {
-            throw new UnsupportedOperationException("Passenger " + p.toString() + " ended at wrong station " + p.currDest().toString());
+            throw new UnsupportedOperationException("Passenger " + p.toString() + " still needed to get to " + p.currDest().toString());
           }
         }
   }
