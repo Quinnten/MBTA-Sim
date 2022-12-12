@@ -35,7 +35,7 @@ public class MoveEvent implements Event {
     int index = stations.indexOf(s1);
 
     //Looks at cases when the train is not at the edge of the line
-    if (t.isMovingForward() && !stations.get(stations.size()).equals(s2)) {
+    if (t.isMovingForward() && !stations.get(stations.size() - 1).equals(s2)) {
       if(!s2.equals(stations.get(index + 1))) {
         throw new UnsupportedOperationException(s2.toString() + " does not come after " + s1.toString() + " on the " + t.toString() + " line");
       } 
@@ -43,7 +43,7 @@ public class MoveEvent implements Event {
       if(!s2.equals(stations.get(index - 1))) {
         throw new UnsupportedOperationException(s2.toString() + " does not come before " + s1.toString() + " on the " + t.toString() + " line");
       }
-    } else if (t.isMovingForward() && stations.get(stations.size()).equals(s2)) {
+    } else if (t.isMovingForward() && stations.get(stations.size() - 1).equals(s2)) {
       if (s2.equals(stations.get(index + 1))) {
         t.setDirection(false);
       } else {
