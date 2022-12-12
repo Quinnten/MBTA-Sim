@@ -29,7 +29,7 @@ public class Train extends Entity {
     thoseOnBoard.remove(p);
   }
 
-  public ArrayList<Passenger> getPassengers(Passenger p) {
+  public ArrayList<Passenger> getPassengers() {
     return thoseOnBoard;
   }
 
