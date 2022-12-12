@@ -120,12 +120,18 @@ public class MBTA {
         for (Map.Entry<String, List<String>> mapElement : c.lines.entrySet()) {
           String key = mapElement.getKey();
           List<String> values = mapElement.getValue();
+          if (lines.containsKey(key)) {
+            throw new UnsupportedOperationException("Can not add two lines with the same name");
+          }
           addLine(key, values);
         }
 
         for (Map.Entry<String, List<String>> mapElement : c.trips.entrySet()) {
           String key = mapElement.getKey();
           List<String> values = mapElement.getValue();
+          if (trips.containsKey(key)) {
+            throw new UnsupportedOperationException("Can not add two passemngers with the same name");
+          }
           addJourney(key, values);
         }
         myReader.close();
